@@ -1,6 +1,7 @@
 package com.egommerce.demo.api.authentication;
 
 import com.egommerce.demo.exception.UserRegistrationException;
+import com.egommerce.demo.model.Login.LoginResponse;
 import com.egommerce.demo.model.User;
 import com.egommerce.demo.service.UserService;
 import com.egommerce.demo.validation.User.UserValidation;
@@ -22,15 +23,15 @@ public class RegisterController {
     }
 
     @PostMapping
-    public ResponseEntity<?> register(@Valid @RequestBody User user) {
+    public ResponseEntity<LoginResponse> register(@Valid @RequestBody User user) {
         UserValidation userValidation = new UserValidation(user, userService);
 
         try {
             userValidation.validate();
-
-            return ResponseEntity.ok(userService.registerUser(user));
+            LoginResponse loginResponse = userService.registerUser(user);
+            return ResponseEntity.ok(loginResponse);
         } catch (UserRegistrationException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(null);
         }
     }
 }

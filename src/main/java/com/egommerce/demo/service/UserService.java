@@ -2,6 +2,7 @@ package com.egommerce.demo.service;
 
 import com.egommerce.demo.dao.User.UserDao;
 import com.egommerce.demo.exception.UserRegistrationException;
+import com.egommerce.demo.model.Login.LoginResponse;
 import com.egommerce.demo.model.User;
 import com.egommerce.demo.security.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,18 +30,25 @@ public class UserService {
         return UserDao.selectUserByEmail(email);
     }
 
-    public String registerUser(User user) {
+    public LoginResponse registerUser(User user) {
         user.setPassword(hashPassword(user.getPassword()));
         int rowsAffected = UserDao.insertUser(user);
 
         if (rowsAffected > 0) {
-            return jwtProvider.generateToken(user);
+            String token = jwtProvider.generateToken(user);
+            return new LoginResponse(token);
         } else {
             throw new UserRegistrationException("Failed to register user");
         }
     }
 
+
     private String hashPassword(String password) {
         return BCrypt.hashpw(password, passHash);
+    }
+
+    public boolean checkPassword(User user, String password) {
+        String hashedPassword = BCrypt.hashpw(password, passHash);
+        return hashedPassword.equals(user.getPassword());
     }
 }
