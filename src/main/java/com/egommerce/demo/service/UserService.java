@@ -1,45 +1,42 @@
 package com.egommerce.demo.service;
 
-import com.egommerce.demo.dao.User.UserDao;
-import com.egommerce.demo.exception.UserRegistrationException;
 import com.egommerce.demo.model.Login.LoginResponse;
-import com.egommerce.demo.model.User;
+import com.egommerce.demo.model.User.User;
+import com.egommerce.demo.repository.UserRepository;
 import com.egommerce.demo.security.JwtProvider;
+import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserService {
 
-    private final UserDao UserDao;
+    private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
 
     @Value("${app.pass.salt}")
     private String passHash;
 
     @Autowired
-    public UserService(@Qualifier("userDao") UserDao UserDao, JwtProvider jwtProvider) {
-        this.UserDao = UserDao;
+    public UserService(UserRepository userRepository, JwtProvider jwtProvider) {
+        this.userRepository = userRepository;
         this.jwtProvider = jwtProvider;
     }
 
     public User getUserByEmail(String email) {
-        return UserDao.selectUserByEmail(email);
+        return userRepository.findByEmail(email);
     }
 
     public LoginResponse registerUser(User user) {
         user.setPassword(hashPassword(user.getPassword()));
-        int rowsAffected = UserDao.insertUser(user);
+        User savedUser = userRepository.save(user);
 
-        if (rowsAffected > 0) {
-            String token = jwtProvider.generateToken(user);
-            return new LoginResponse(token);
-        } else {
-            throw new UserRegistrationException("Failed to register user");
-        }
+        String token = jwtProvider.generateToken(savedUser);
+        return new LoginResponse(token);
     }
 
 
@@ -50,5 +47,28 @@ public class UserService {
     public boolean checkPassword(User user, String password) {
         String hashedPassword = BCrypt.hashpw(password, passHash);
         return hashedPassword.equals(user.getPassword());
+    }
+
+    public boolean authorizeUserAccessFromToken(String token) {
+        String userEmail;
+        User validUser;
+
+        try {
+            userEmail = jwtProvider.getEmailFromToken(token);
+        } catch (SignatureException e) {
+            return false;
+        }
+
+        validUser = getUserByEmail(userEmail);
+
+        if (validUser != null && token != null) {
+            try {
+                return jwtProvider.validateToken(token);
+            } catch (SignatureException e) {
+                return false;
+            }
+        }
+
+        return false;
     }
 }

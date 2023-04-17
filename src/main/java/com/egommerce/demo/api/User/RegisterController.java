@@ -1,8 +1,8 @@
-package com.egommerce.demo.api.authentication;
+package com.egommerce.demo.api.User;
 
 import com.egommerce.demo.exception.UserRegistrationException;
 import com.egommerce.demo.model.Login.LoginResponse;
-import com.egommerce.demo.model.User;
+import com.egommerce.demo.model.User.User;
 import com.egommerce.demo.service.UserService;
 import com.egommerce.demo.validation.User.UserValidation;
 import jakarta.validation.Valid;
@@ -31,7 +31,7 @@ public class RegisterController {
             LoginResponse loginResponse = userService.registerUser(user);
             return ResponseEntity.ok(loginResponse);
         } catch (UserRegistrationException e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(new LoginResponse(null,e.getMessage()));
         }
     }
 }

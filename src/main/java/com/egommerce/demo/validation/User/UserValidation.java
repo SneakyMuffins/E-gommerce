@@ -1,7 +1,7 @@
 package com.egommerce.demo.validation.User;
 
 import com.egommerce.demo.exception.UserRegistrationException;
-import com.egommerce.demo.model.User;
+import com.egommerce.demo.model.User.User;
 import com.egommerce.demo.service.UserService;
 
 public class UserValidation {

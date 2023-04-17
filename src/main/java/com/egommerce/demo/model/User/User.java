@@ -1,23 +1,42 @@
-package com.egommerce.demo.model;
+package com.egommerce.demo.model.User;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.UUID;
+import java.sql.Timestamp;
 
+@Entity
+@Table(name = "user")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "entity_id")
+    private Long id;
+
+    @Column(name = "username", nullable = false)
     @NotBlank(message = "User name is mandatory")
     private String username;
+
+    @Column(name = "password_hash", nullable = false)
     @NotBlank(message = "Password is mandatory")
     private String password;
 
+    @Column(name = "email", nullable = false)
     @Email(message = "Invalid Email address provided")
     @NotBlank(message = "Email is mandatory")
     private String email;
-    @NotNull
-    private UUID userId;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @CreationTimestamp
+    private Timestamp createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    @UpdateTimestamp
+    private Timestamp updatedAt;
 
     public User() {}
 
@@ -27,7 +46,10 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.userId = UUID.randomUUID();
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -40,10 +62,6 @@ public class User {
 
     public String getEmail() {
         return email;
-    }
-
-    public UUID getId() {
-        return userId;
     }
 
     public void setPassword(String password) {

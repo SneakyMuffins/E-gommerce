@@ -1,6 +1,6 @@
 package com.egommerce.demo.security;
 
-import com.egommerce.demo.model.User;
+import com.egommerce.demo.model.User.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -39,13 +39,12 @@ public class JwtProvider {
         return claimsResolver.apply(claims);
     }
 
-    public boolean validateToken(String token, User user) {
-        final String email = getEmailFromToken(token);
-        return (email.equals(user.getEmail()) && !isTokenExpired(token));
+    public boolean validateToken(String token) {
+        return !isTokenExpired(token);
     }
 
     public String getEmailFromToken(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+        return getClaimFromToken(token, claims -> claims.get("email", String.class));
     }
 
     public boolean isTokenExpired(String token) {
