@@ -2,6 +2,12 @@
 const nextConfig = {
   experimental: {
     appDir: true,
+  }, images: {
+    remotePatterns: [
+      {
+        hostname: 'files.stripe.com',
+      },
+    ],
   },
 }
 
