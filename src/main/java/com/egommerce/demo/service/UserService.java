@@ -5,6 +5,7 @@ import com.egommerce.demo.model.User.User;
 import com.egommerce.demo.repository.UserRepository;
 import com.egommerce.demo.security.JwtProvider;
 import io.jsonwebtoken.SignatureException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -47,6 +48,16 @@ public class UserService {
     public boolean checkPassword(User user, String password) {
         String hashedPassword = BCrypt.hashpw(password, passHash);
         return hashedPassword.equals(user.getPassword());
+    }
+
+    public User getAuthenticatedUser(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+
+        if (token != null && jwtProvider.validateToken(token)) {
+            String userEmail = jwtProvider.getEmailFromToken(token);
+            return userRepository.findByEmail(userEmail);
+        }
+        return null;
     }
 
     public boolean authorizeUserAccessFromToken(String token) {

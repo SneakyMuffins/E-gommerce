@@ -21,16 +21,16 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
-    public Address findByIdAndUserId(Long id, String userId) {
-        return addressRepository.findByIdAndUser_Id(id, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Address not found with id " + id + " and user id " + userId));
+    public Address findById(Long id) {
+        return addressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found with id " + id));
     }
 
     public List<Address> findAllByUserId(String userId) {
         return addressRepository.findAllByUser_Id(userId);
     }
 
-    public void deleteByIdAndUserId(Long id, String userId) {
-        addressRepository.deleteByIdAndUser_Id(id, userId);
+    public void deleteById(Long id) {
+        addressRepository.deleteById(id);
     }
 }
