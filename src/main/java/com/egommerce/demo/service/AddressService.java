@@ -26,7 +26,7 @@ public class AddressService {
                 .orElseThrow(() -> new ResourceNotFoundException("Address not found with id " + id));
     }
 
-    public List<Address> findAllByUserId(String userId) {
+    public List<Address> findAllByUserId(Long userId) {
         return addressRepository.findAllByUser_Id(userId);
     }
 

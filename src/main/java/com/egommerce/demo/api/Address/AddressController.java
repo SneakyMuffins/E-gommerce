@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/address")
 @CrossOrigin
@@ -28,6 +30,41 @@ public class AddressController {
         this.addressService = addressService;
         this.jwtProvider = jwtProvider;
         this.userService = userService;
+    }
+
+    @RequireAuthorization
+    @GetMapping
+    public ResponseEntity<List<Address>> getAddresses(HttpServletRequest request) {
+        User authenticatedUser = userService.getAuthenticatedUser(request);
+
+        if (authenticatedUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        List<Address> addresses = addressService.findAllByUserId(authenticatedUser.getId());
+        return ResponseEntity.ok(addresses);
+    }
+
+    @RequireAuthorization
+    @GetMapping("/{addressId}")
+    public ResponseEntity<Address> getAddress(HttpServletRequest request, @PathVariable Long addressId) {
+        User authenticatedUser = userService.getAuthenticatedUser(request);
+
+        if (authenticatedUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        Address address = addressService.findById(addressId);
+
+        AddressValidation addressValidation = new AddressValidation(address, authenticatedUser);
+
+        try {
+            addressValidation.validateOwnership();
+
+            return ResponseEntity.ok(address);
+        } catch (AddressValidationException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @RequireAuthorization

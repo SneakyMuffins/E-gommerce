@@ -32,7 +32,7 @@ public class AddressValidation {
 
     public void validateOwnership() throws AddressValidationException {
         if (address.getUser() == null || !address.getUser().equals(authenticatedUser)) {
-            throw new AddressValidationException("You do not have permission to edit this address.");
+            throw new AddressValidationException("You do not have permission to access this address.");
         }
     }
 
