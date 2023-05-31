@@ -1,5 +1,6 @@
 package com.egommerce.demo.model.User;
 
+import com.egommerce.demo.model.Address.Address;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -30,6 +32,9 @@ public class User {
     @NotBlank(message = "Email is mandatory")
     private String email;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Address> addresses;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private Timestamp createdAt;
@@ -37,6 +42,9 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private Timestamp updatedAt;
+
+    @Column(name = "is_admin", nullable = false)
+    private Boolean isAdmin;
 
     public User() {}
 
@@ -46,6 +54,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.isAdmin = false; // By default, a user is not an admin
     }
 
     public Long getId() {
@@ -66,5 +75,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        isAdmin = admin;
+    }
+
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
     }
 }

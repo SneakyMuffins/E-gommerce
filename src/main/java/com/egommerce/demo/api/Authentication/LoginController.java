@@ -41,6 +41,12 @@ public class LoginController {
                     .body(new LoginResponse(null, "Invalid email or password"));
         }
 
+        if (userService.isAdminUser(user)) {
+            String token = jwtProvider.generateToken(user, true); // Include admin status in token
+            LoginResponse response = new LoginResponse(token);
+            return ResponseEntity.ok(response);
+        }
+
         String token = jwtProvider.generateToken(user);
 
         LoginResponse response = new LoginResponse(token);

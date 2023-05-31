@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,18 +29,35 @@ public class UserService {
         this.jwtProvider = jwtProvider;
     }
 
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public User findById(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        return optionalUser.orElse(null);
+    }
+
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     public LoginResponse registerUser(User user) {
         user.setPassword(hashPassword(user.getPassword()));
+        user.setAdmin(false); // By default, a registered user is not an admin
         User savedUser = userRepository.save(user);
 
         String token = jwtProvider.generateToken(savedUser);
         return new LoginResponse(token);
     }
 
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
 
     private String hashPassword(String password) {
         return BCrypt.hashpw(password, passHash);
@@ -81,5 +99,9 @@ public class UserService {
         }
 
         return false;
+    }
+
+    public boolean isAdminUser(User user) {
+        return user.isAdmin();
     }
 }

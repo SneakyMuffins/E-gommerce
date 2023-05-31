@@ -10,7 +10,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-
 /**
  * Authorization interceptor
  */
@@ -27,9 +26,9 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         if (handler instanceof HandlerMethod method) {
-            RequireAuthorization annotation = method.getMethodAnnotation(RequireAuthorization.class);
+            RequireAuthorization requireAuthorization = method.getMethodAnnotation(RequireAuthorization.class);
 
-            if (annotation != null) {
+            if (requireAuthorization != null) {
                 String token = request.getHeader("Authorization");
 
                 try {
