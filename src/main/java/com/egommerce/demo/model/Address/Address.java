@@ -1,5 +1,6 @@
 package com.egommerce.demo.model.Address;
 
+import com.egommerce.demo.annotation.ExcludeUpdate;
 import com.egommerce.demo.model.User.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -11,11 +12,13 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "address")
 public class Address {
+    @ExcludeUpdate
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "entity_id")
     private Long id;
 
+    @ExcludeUpdate
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -40,10 +43,12 @@ public class Address {
     @NotEmpty(message = "Country is required")
     private String country;
 
+    @ExcludeUpdate
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private Timestamp createdAt;
 
+    @ExcludeUpdate
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private Timestamp updatedAt;

@@ -95,10 +95,6 @@ public class AddressController {
         Address address = addressService.findById(addressId);
         User authenticatedUser = userService.getAuthenticatedUser(request);
 
-        if (authenticatedUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
-        }
-
         if (address == null) {
             return ResponseEntity.notFound().build();
         }
@@ -108,27 +104,7 @@ public class AddressController {
         try {
             addressValidation.validateOwnership();
 
-            // Only update the fields that were provided in the request
-            if (updatedAddress.getName() != null) {
-                address.setName(updatedAddress.getName());
-            }
-            if (updatedAddress.getStreetAddress() != null) {
-                address.setStreetAddress(updatedAddress.getStreetAddress());
-            }
-            if (updatedAddress.getCity() != null) {
-                address.setCity(updatedAddress.getCity());
-            }
-            if (updatedAddress.getState() != null) {
-                address.setState(updatedAddress.getState());
-            }
-            if (updatedAddress.getZipCode() != null) {
-                address.setZipCode(updatedAddress.getZipCode());
-            }
-            if (updatedAddress.getCountry() != null) {
-                address.setCountry(updatedAddress.getCountry());
-            }
-
-            Address updated = addressService.save(address);
+            Address updated = addressService.updateAddressDetails(addressId, updatedAddress);
             return ResponseEntity.ok().body("Address updated with id " + updated.getId());
         } catch (AddressValidationException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
