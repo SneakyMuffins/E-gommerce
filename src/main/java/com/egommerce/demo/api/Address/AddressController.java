@@ -99,12 +99,8 @@ public class AddressController {
             return ResponseEntity.notFound().build();
         }
 
-        AddressValidation addressValidation = new AddressValidation(address, authenticatedUser);
-
         try {
-            addressValidation.validateOwnership();
-
-            Address updated = addressService.updateAddressDetails(addressId, updatedAddress);
+            Address updated = addressService.updateAddressDetails(addressId, updatedAddress, authenticatedUser);
             return ResponseEntity.ok().body("Address updated with id " + updated.getId());
         } catch (AddressValidationException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

@@ -1,12 +1,15 @@
 package com.egommerce.demo.service;
 
 import com.egommerce.demo.annotation.ExcludeUpdate;
+import com.egommerce.demo.exception.AddressValidationException;
 import com.egommerce.demo.exception.ResourceNotFoundException;
 import com.egommerce.demo.exception.UserNotFoundException;
 import com.egommerce.demo.model.Address.Address;
 import com.egommerce.demo.model.User.User;
 import com.egommerce.demo.repository.AddressRepository;
+import com.egommerce.demo.validation.Address.AddressValidation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -38,7 +41,7 @@ public class AddressService {
         addressRepository.deleteById(id);
     }
 
-    public Address updateAddressDetails(Long id, Address addressUpdates) {
+    public Address updateAddressDetails(Long id, Address addressUpdates, User authenticatedUser) {
         Address address = findById(id);
         if (address != null) {
             Field[] fields = addressUpdates.getClass().getDeclaredFields();
@@ -56,7 +59,14 @@ public class AddressService {
                     e.printStackTrace();
                 }
             }
-            save(address);
+            try {
+                AddressValidation addressValidation = new AddressValidation(address, authenticatedUser);
+                addressValidation.validate();
+
+                save(address);
+            } catch (AddressValidationException e) {
+                throw new AddressValidationException(e.getMessage());
+            }
         } else {
             throw new UserNotFoundException(id);
         }
