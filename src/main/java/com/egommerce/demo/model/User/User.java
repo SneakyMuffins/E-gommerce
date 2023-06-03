@@ -1,5 +1,6 @@
 package com.egommerce.demo.model.User;
 
+import com.egommerce.demo.annotation.ExcludeUpdate;
 import com.egommerce.demo.model.Address.Address;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -14,19 +15,24 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 public class User {
+    @ExcludeUpdate
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "entity_id")
     private Long id;
 
+    @JsonProperty("username")
     @Column(name = "username", nullable = false)
     @NotBlank(message = "User name is mandatory")
     private String username;
 
+    @ExcludeUpdate
+    @JsonProperty("password")
     @Column(name = "password_hash", nullable = false)
     @NotBlank(message = "Password is mandatory")
     private String password;
 
+    @JsonProperty("email")
     @Column(name = "email", nullable = false)
     @Email(message = "Invalid Email address provided")
     @NotBlank(message = "Email is mandatory")
@@ -35,22 +41,23 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses;
 
+    @ExcludeUpdate
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private Timestamp createdAt;
 
+    @ExcludeUpdate
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private Timestamp updatedAt;
 
+    @JsonProperty("isAdmin")
     @Column(name = "is_admin", nullable = false)
     private Boolean isAdmin;
 
     public User() {}
 
-    public User(@JsonProperty("username") String username,
-                @JsonProperty("password") String password,
-                @JsonProperty("email") String email) {
+    public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;

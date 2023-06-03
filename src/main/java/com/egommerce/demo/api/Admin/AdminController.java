@@ -2,7 +2,6 @@ package com.egommerce.demo.api.Admin;
 
 import com.egommerce.demo.annotation.AdminOnly;
 import com.egommerce.demo.annotation.RequireAuthorization;
-import com.egommerce.demo.model.User.Dto.AdminStatusDto;
 import com.egommerce.demo.model.User.User;
 import com.egommerce.demo.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +29,10 @@ public class AdminController {
         return adminService.getAllUsers();
     }
 
-    @AdminOnly
-    @RequireAuthorization
-    @PutMapping("/users/{id}/admin")
+    @PutMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateAdminStatus(@PathVariable Long id, @RequestBody AdminStatusDto adminStatusDto) {
-        adminService.updateAdminStatus(id, adminStatusDto.isAdmin());
+    public void updateUserDetails(@PathVariable Long id, @RequestBody User userUpdates) {
+        adminService.updateUserDetails(id, userUpdates);
     }
 
     @AdminOnly

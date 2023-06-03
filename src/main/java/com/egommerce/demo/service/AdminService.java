@@ -19,15 +19,8 @@ public class AdminService {
         return userService.findAll();
     }
 
-    public void updateAdminStatus(Long userId, boolean isAdmin) {
-        User user = userService.findById(userId);
-
-        if (user != null) {
-            user.setAdmin(isAdmin);
-            userService.save(user);
-        } else {
-            throw new IllegalArgumentException("User not found with ID: " + userId);
-        }
+    public void updateUserDetails(Long id, User userUpdates) {
+        userService.updateUserDetails(id, userUpdates);
     }
 
     public void deleteUser(Long userId) {

@@ -1,5 +1,7 @@
 package com.egommerce.demo.service;
 
+import com.egommerce.demo.annotation.ExcludeUpdate;
+import com.egommerce.demo.exception.UserNotFoundException;
 import com.egommerce.demo.model.Login.LoginResponse;
 import com.egommerce.demo.model.User.User;
 import com.egommerce.demo.repository.UserRepository;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,6 +102,30 @@ public class UserService {
         }
 
         return false;
+    }
+
+    public void updateUserDetails(Long id, User userUpdates) {
+        User user = findById(id);
+        if (user != null) {
+            Field[] fields = userUpdates.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                try {
+                    field.setAccessible(true);
+                    Object value = field.get(userUpdates);
+
+                    if (value != null && !field.isAnnotationPresent(ExcludeUpdate.class)) {
+                        Field userField = user.getClass().getDeclaredField(field.getName());
+                        userField.setAccessible(true);
+                        userField.set(user, value);
+                    }
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            save(user);
+        } else {
+            throw new UserNotFoundException(id);
+        }
     }
 
     public boolean isAdminUser(User user) {
