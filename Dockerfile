@@ -21,7 +21,7 @@ WORKDIR /app
 
 # Install MySQL client tools
 RUN apt-get update && \
-    apt-get install -y mysql-client
+    apt-get install -y default-mysql-client
 
 # Copy the built JAR file from the build stage to the runtime stage
 COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
