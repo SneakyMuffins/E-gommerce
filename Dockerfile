@@ -11,7 +11,7 @@ COPY pom.xml .
 COPY src ./src
 
 # Build the application with Maven
-RUN ./mvnw clean package
+RUN ./mvn clean package
 
 # Set the entrypoint command to run the application
 ENTRYPOINT ["java", "-jar", "target/demo-0.0.1-SNAPSHOT.jar"]
