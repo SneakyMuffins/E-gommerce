@@ -1,5 +1,5 @@
 # Start with a base image that includes Java 19
-FROM adoptopenjdk:19-jdk-hotspot
+FROM adoptopenjdk:19-jdk
 
 # Set the working directory in the container
 WORKDIR /app
