@@ -1,5 +1,12 @@
-# Use a base image with the desired JDK version
-FROM openjdk:19-jdk-slim AS build
+# Use a base image with Ubuntu and OpenJDK 19
+FROM ubuntu:latest AS build
+
+# Install OpenJDK 19
+RUN apt-get update && \
+    apt-get install -y openjdk-19-jdk
+
+# Install Maven
+RUN apt-get install -y maven
 
 # Set the working directory in the container
 WORKDIR /app
@@ -11,9 +18,7 @@ COPY pom.xml .
 COPY src ./src
 
 # Build the application with Maven
-RUN apt-get update && \
-    apt-get install -y maven && \
-    mvn clean package
+RUN mvn clean package
 
 # Use a separate stage for the runtime image
 FROM openjdk:19-jdk-slim
