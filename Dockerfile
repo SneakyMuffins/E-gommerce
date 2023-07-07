@@ -14,6 +14,7 @@ COPY src ./src
 COPY .mvn .mvn
 
 # Build the application with Maven Wrapper
+RUN chmod +x ./mvnw
 RUN ./mvnw clean package
 
 # Set the entrypoint command to run the application
