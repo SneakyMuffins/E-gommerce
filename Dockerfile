@@ -1,5 +1,5 @@
-# Start with a base image that includes Java 19
-FROM openjdk:19-jdk
+# Use a base image with the desired JDK version
+FROM openjdk:19-jdk-slim AS build
 
 # Set the working directory in the container
 WORKDIR /app
@@ -10,12 +10,22 @@ COPY pom.xml .
 # Copy the source code to the container
 COPY src ./src
 
-# Copy the Maven Wrapper files to the container
-COPY .mvn .mvn
+# Build the application with Maven
+RUN apt-get update && \
+    apt-get install -y maven && \
+    mvn clean package
 
-# Build the application with Maven Wrapper
-RUN chmod +x ./mvnw
-RUN ./mvnw clean package
+# Use a separate stage for the runtime image
+FROM openjdk:19-jdk-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the built JAR file from the build stage to the runtime stage
+COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
+
+# Expose the desired port
+EXPOSE 8080
 
 # Set the entrypoint command to run the application
-ENTRYPOINT ["java", "-jar", "target/demo-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
