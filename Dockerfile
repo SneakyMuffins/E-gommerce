@@ -10,8 +10,11 @@ COPY pom.xml .
 # Copy the source code to the container
 COPY src ./src
 
-# Build the application with Maven
-RUN ./mvn clean package
+# Copy the Maven Wrapper files to the container
+COPY .mvn .mvn
+
+# Build the application with Maven Wrapper
+RUN ./mvnw clean package
 
 # Set the entrypoint command to run the application
 ENTRYPOINT ["java", "-jar", "target/demo-0.0.1-SNAPSHOT.jar"]
