@@ -1,5 +1,5 @@
 # Use the official Maven image as the build environment
-FROM maven:3.8.7-eclipse-temurin-19 AS builder
+FROM maven:3.8.2-openjdk-19 AS builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -28,9 +28,6 @@ RUN apt-get update && \
     apt-get install -y mysql-server && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# Copy the MySQL configuration file
-COPY mysql.cnf /etc/mysql/mysql.cnf
 
 # Initialize and configure MySQL
 RUN mkdir /var/run/mysqld && \
