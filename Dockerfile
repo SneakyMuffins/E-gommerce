@@ -1,5 +1,5 @@
 # Use the official Maven image as the build environment
-FROM maven:3.8.2-openjdk-19 AS builder
+FROM maven:3.8.7-eclipse-temurin-19 AS builder
 
 # Set the working directory in the container
 WORKDIR /app
