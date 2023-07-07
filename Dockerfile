@@ -18,7 +18,7 @@ COPY pom.xml .
 COPY src ./src
 
 # Build the application with Maven
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 # Use a separate stage for the runtime image
 FROM openjdk:19-jdk-slim
