@@ -1,49 +1,54 @@
-# Use a base image with Ubuntu and OpenJDK 19
-FROM ubuntu:latest AS build
-
-# Use the official MySQL 8.0 image
-FROM mysql:8.0
-
-# Set the root password (optional)
-ENV MYSQL_ROOT_PASSWORD=root
-
-# Create a user named "misho" with no password
-ENV MYSQL_USER=misho
-ENV MYSQL_PASSWORD=
-
-# Expose the MySQL port
-EXPOSE 3306
-
-# Install OpenJDK 19
-RUN apt-get update && \
-    apt-get install -y openjdk-19-jdk
-
-# Install Maven
-RUN apt-get install -y maven
+# Use the official Maven image as the build environment
+FROM maven:3.8.2-openjdk-19 AS builder
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the pom.xml file to the container
+# Copy the project files to the container
 COPY pom.xml .
-
-# Copy the source code to the container
 COPY src ./src
 
-# Build the application with Maven
+# Build the application using Maven
 RUN mvn clean package -DskipTests
 
-# Use a separate stage for the runtime image
-FROM openjdk:19-jdk-slim
+# Use the official OpenJDK image as the base image for the runtime environment
+FROM openjdk:19
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the built JAR file from the build stage to the runtime stage
-COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar app.jar
+# Copy the compiled application from the builder stage
+COPY --from=builder /app/target/demo-0.0.1-SNAPSHOT.jar ./app.jar
 
-# Expose the desired port
+# Expose the port on which your Spring Boot app runs
 EXPOSE 8080
 
-# Set the entrypoint command to run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Install MySQL and dependencies
+RUN apt-get update && \
+    apt-get install -y mysql-server && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy the MySQL configuration file
+COPY mysql.cnf /etc/mysql/mysql.cnf
+
+# Initialize and configure MySQL
+RUN mkdir /var/run/mysqld && \
+    chown -R mysql:mysql /var/run/mysqld && \
+    chmod 777 /var/run/mysqld && \
+    service mysql start && \
+    mysql -e "CREATE DATABASE egommerce;" && \
+    mysql -e "CREATE USER 'misho'@'localhost' IDENTIFIED BY '';" && \
+    mysql -e "GRANT ALL PRIVILEGES ON egommerce.* TO 'misho'@'localhost';"
+
+# Set the environment variables for MySQL
+ENV SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/egommerce
+ENV SPRING_DATASOURCE_USERNAME=misho
+ENV SPRING_DATASOURCE_PASSWORD=
+ENV SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+ENV SPRING_JPA_GENERATE_DDL=true
+ENV SPRING_JPA_HIBERNATE_DDL_AUTO=update
+ENV SPRING_JPA_HIBERNATE_USE_NEW_ID_GENERATOR_MAPPINGS=false
+
+# Run the Spring Boot application
+CMD ["java", "-jar", "app.jar"]
