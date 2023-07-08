@@ -23,11 +23,5 @@ COPY --from=builder /app/target/demo-0.0.1-SNAPSHOT.jar ./app.jar
 # Expose the port on which your Spring Boot app runs
 EXPOSE 8080
 
-# Install MySQL client library
-RUN apt-get update && \
-    apt-get install -y default-mysql-client && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 # Run the Spring Boot application
 CMD ["java", "-jar", "app.jar"]
