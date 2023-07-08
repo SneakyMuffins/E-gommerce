@@ -7,31 +7,10 @@ services:
     envVars:
       - key: MYSQL_ROOT_PASSWORD
         value: root
-    ports:
-      - port: 3306
-        protocol: tcp
-    disk:
-      name: mysql-data
-      mountPath: /var/lib/mysql
-    networks:
-      - mynetwork
 
   - type: web
     name: spring
     runtime: docker
     repo: .  # Assuming the Dockerfile is in the repository root
     dockerfilePath: Dockerfile
-    ports:
-      - port: 8080
-        protocol: tcp
-    dependsOn:
-      - mysql
-    networks:
-      - mynetwork
 
-volumes:
-  - name: mysql-data
-
-networks:
-  - name: mynetwork
-    type: bridge
