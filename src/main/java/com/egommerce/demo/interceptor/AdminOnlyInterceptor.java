@@ -25,13 +25,15 @@ public class AdminOnlyInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        AdminOnly adminOnly = ((HandlerMethod) handler).getMethodAnnotation(AdminOnly.class);
+        if (handler instanceof HandlerMethod method) {
+            AdminOnly adminOnly = ((HandlerMethod) handler).getMethodAnnotation(AdminOnly.class);
 
-        if (adminOnly != null) {
-            User authenticatedUser = userService.getAuthenticatedUser(request);
-            if (authenticatedUser == null || !userService.isAdminUser(authenticatedUser)) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                return false;
+            if (adminOnly != null) {
+                User authenticatedUser = userService.getAuthenticatedUser(request);
+                if (authenticatedUser == null || !userService.isAdminUser(authenticatedUser)) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    return false;
+                }
             }
         }
 
