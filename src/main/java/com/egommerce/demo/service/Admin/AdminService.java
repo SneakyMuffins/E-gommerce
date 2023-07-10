@@ -50,6 +50,10 @@ public class AdminService {
         return productService.getAllProducts();
     }
 
+    public Product findById(Long id) {
+        return productService.findById(id);
+    }
+
     public void createProduct(Product product) {
         productService.createProduct(product);
     }
