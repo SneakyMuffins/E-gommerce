@@ -3,7 +3,7 @@ package com.egommerce.demo.api.Authentication;
 import com.egommerce.demo.model.Login.LoginRequest;
 import com.egommerce.demo.model.Login.LoginResponse;
 import com.egommerce.demo.model.User.User;
-import com.egommerce.demo.service.UserService;
+import com.egommerce.demo.service.User.UserService;
 import com.egommerce.demo.security.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

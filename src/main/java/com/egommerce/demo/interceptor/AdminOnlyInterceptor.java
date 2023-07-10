@@ -2,7 +2,7 @@ package com.egommerce.demo.interceptor;
 
 import com.egommerce.demo.annotation.AdminOnly;
 import com.egommerce.demo.model.User.User;
-import com.egommerce.demo.service.UserService;
+import com.egommerce.demo.service.User.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;

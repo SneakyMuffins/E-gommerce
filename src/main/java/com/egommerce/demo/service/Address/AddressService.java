@@ -1,27 +1,27 @@
-package com.egommerce.demo.service;
+package com.egommerce.demo.service.Address;
 
-import com.egommerce.demo.annotation.ExcludeUpdate;
 import com.egommerce.demo.exception.AddressValidationException;
 import com.egommerce.demo.exception.ResourceNotFoundException;
 import com.egommerce.demo.exception.UserNotFoundException;
 import com.egommerce.demo.model.Address.Address;
 import com.egommerce.demo.model.User.User;
 import com.egommerce.demo.repository.AddressRepository;
+import com.egommerce.demo.utility.EntityUpdater;
 import com.egommerce.demo.validation.Address.AddressValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 @Service
 public class AddressService {
     private final AddressRepository addressRepository;
+    private final EntityUpdater entityUpdater;
 
     @Autowired
-    public AddressService(AddressRepository addressRepository) {
+    public AddressService(AddressRepository addressRepository, EntityUpdater entityUpdater) {
         this.addressRepository = addressRepository;
+        this.entityUpdater = entityUpdater;
     }
 
     public Address save(Address address) {
@@ -44,26 +44,13 @@ public class AddressService {
     public Address updateAddressDetails(Long id, Address addressUpdates, User authenticatedUser) {
         Address address = findById(id);
         if (address != null) {
-            Field[] fields = addressUpdates.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                try {
-                    field.setAccessible(true);
-                    Object value = field.get(addressUpdates);
+            Address updatedAddress = entityUpdater.updateEntity(address, addressUpdates);
 
-                    if (value != null && !field.isAnnotationPresent(ExcludeUpdate.class)) {
-                        Field userField = address.getClass().getDeclaredField(field.getName());
-                        userField.setAccessible(true);
-                        userField.set(address, value);
-                    }
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
             try {
-                AddressValidation addressValidation = new AddressValidation(address, authenticatedUser);
+                AddressValidation addressValidation = new AddressValidation(updatedAddress, authenticatedUser);
                 addressValidation.validate();
 
-                save(address);
+                save(updatedAddress);
             } catch (AddressValidationException e) {
                 throw new AddressValidationException(e.getMessage());
             }

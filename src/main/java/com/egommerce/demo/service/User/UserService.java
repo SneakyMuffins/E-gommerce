@@ -1,11 +1,13 @@
-package com.egommerce.demo.service;
+package com.egommerce.demo.service.User;
 
-import com.egommerce.demo.annotation.ExcludeUpdate;
 import com.egommerce.demo.exception.UserNotFoundException;
+import com.egommerce.demo.exception.UserRegistrationException;
 import com.egommerce.demo.model.Login.LoginResponse;
 import com.egommerce.demo.model.User.User;
 import com.egommerce.demo.repository.UserRepository;
 import com.egommerce.demo.security.JwtProvider;
+import com.egommerce.demo.utility.EntityUpdater;
+import com.egommerce.demo.validation.User.UserValidation;
 import io.jsonwebtoken.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,14 +23,16 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
+    private final EntityUpdater entityUpdater;
 
     @Value("${app.pass.salt}")
     private String passHash;
 
     @Autowired
-    public UserService(UserRepository userRepository, JwtProvider jwtProvider) {
+    public UserService(UserRepository userRepository, JwtProvider jwtProvider, EntityUpdater entityUpdater) {
         this.userRepository = userRepository;
         this.jwtProvider = jwtProvider;
+        this.entityUpdater = entityUpdater;
     }
 
     public List<User> findAll() {
@@ -107,22 +110,15 @@ public class UserService {
     public void updateUserDetails(Long id, User userUpdates) {
         User user = findById(id);
         if (user != null) {
-            Field[] fields = userUpdates.getClass().getDeclaredFields();
-            for (Field field : fields) {
-                try {
-                    field.setAccessible(true);
-                    Object value = field.get(userUpdates);
+            User updatedUser = entityUpdater.updateEntity(user, userUpdates);
 
-                    if (value != null && !field.isAnnotationPresent(ExcludeUpdate.class)) {
-                        Field userField = user.getClass().getDeclaredField(field.getName());
-                        userField.setAccessible(true);
-                        userField.set(user, value);
-                    }
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+            try {
+                UserValidation userValidation = new UserValidation(updatedUser, this);
+                userValidation.validate();
+                save(updatedUser);
+            } catch (UserRegistrationException e) {
+                throw new RuntimeException(e);
             }
-            save(user);
         } else {
             throw new UserNotFoundException(id);
         }

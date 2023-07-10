@@ -3,7 +3,7 @@ package com.egommerce.demo.api.User;
 import com.egommerce.demo.exception.UserRegistrationException;
 import com.egommerce.demo.model.Login.LoginResponse;
 import com.egommerce.demo.model.User.User;
-import com.egommerce.demo.service.UserService;
+import com.egommerce.demo.service.User.UserService;
 import com.egommerce.demo.validation.User.UserValidation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

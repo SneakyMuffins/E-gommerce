@@ -2,7 +2,7 @@ package com.egommerce.demo.validation.User;
 
 import com.egommerce.demo.exception.UserRegistrationException;
 import com.egommerce.demo.model.User.User;
-import com.egommerce.demo.service.UserService;
+import com.egommerce.demo.service.User.UserService;
 
 public class UserValidation {
     private final User user;
@@ -39,7 +39,8 @@ public class UserValidation {
             throw new UserRegistrationException("Invalid email format.");
         }
 
-        if (userService.getUserByEmail(email) != null) {
+        User existingUser = userService.getUserByEmail(email);
+        if (existingUser != null && !existingUser.getId().equals(user.getId())) {
             throw new UserRegistrationException("Email already exists.");
         }
     }
