@@ -1,8 +1,13 @@
-package com.egommerce.demo.service;
+package com.egommerce.demo.service.Admin;
 
+import com.egommerce.demo.model.Category.Category;
 import com.egommerce.demo.model.Product.Product;
+import com.egommerce.demo.model.Seller.Seller;
 import com.egommerce.demo.model.User.User;
-import com.egommerce.demo.repository.ProductRepository;
+import com.egommerce.demo.service.Category.CategoryService;
+import com.egommerce.demo.service.Product.ProductService;
+import com.egommerce.demo.service.Seller.SellerService;
+import com.egommerce.demo.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +16,16 @@ import java.util.List;
 @Service
 public class AdminService {
     private final UserService userService;
-    private final ProductRepository productRepository;
+    private final ProductService productService;
+    private final CategoryService categoryService;
+    private final SellerService sellerService;
 
     @Autowired
-    public AdminService(UserService userService, ProductRepository productRepository) {
+    public AdminService(UserService userService, ProductService productService, CategoryService categoryService, SellerService sellerService) {
         this.userService = userService;
-        this.productRepository = productRepository;
+        this.productService = productService;
+        this.categoryService = categoryService;
+        this.sellerService = sellerService;
     }
 
     public List<User> getAllUsers() {
@@ -38,29 +47,50 @@ public class AdminService {
     }
 
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        return productService.getAllProducts();
     }
 
     public void createProduct(Product product) {
-        productRepository.save(product);
+        productService.createProduct(product);
     }
 
     public void updateProductDetails(Long id, Product productUpdates) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
-
-        // Update the product details with the provided updates
-        product.setName(productUpdates.getName());
-        product.setDescription(productUpdates.getDescription());
-        product.setPrice(productUpdates.getPrice());
-
-        productRepository.save(product);
+        productService.updateProductDetails(id, productUpdates);
     }
 
     public void deleteProduct(Long productId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + productId));
+        productService.deleteProduct(productId);
+    }
 
-        productRepository.delete(product);
+    public List<Category> getAllCategories() {
+        return categoryService.getAllCategories();
+    }
+
+    public void createCategory(Category category) {
+        categoryService.createCategory(category);
+    }
+
+    public void updateCategoryDetails(Long id, Category categoryUpdates) {
+        categoryService.updateCategoryDetails(id, categoryUpdates);
+    }
+
+    public void deleteCategory(Long categoryId) {
+        categoryService.deleteCategory(categoryId);
+    }
+
+    public List<Seller> getAllSellers() {
+        return sellerService.getAllSellers();
+    }
+
+    public void createSeller(Seller seller) {
+        sellerService.createSeller(seller);
+    }
+
+    public void updateSellerDetails(Long id, Seller sellerUpdates) {
+        sellerService.updateSellerDetails(id, sellerUpdates);
+    }
+
+    public void deleteSeller(Long sellerId) {
+        sellerService.deleteSeller(sellerId);
     }
 }
