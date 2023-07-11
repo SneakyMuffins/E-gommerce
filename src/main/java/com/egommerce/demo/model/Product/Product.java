@@ -46,6 +46,10 @@ public class Product {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "stock")
+    @NotNull(message = "Stock is mandatory")
+    private Long stock;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     @ExcludeUpdate
     @CreationTimestamp
@@ -59,13 +63,14 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, Category category, Seller seller, Double price, String description, String imageUrl) {
+    public Product(String name, Category category, Seller seller, Double price, String description, String imageUrl, Long stock) {
         this.name = name;
         this.category = category;
         this.seller = seller;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
+        this.stock = stock;
     }
 
     public Long getId() {
@@ -126,5 +131,13 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Long getStock() {
+        return stock;
+    }
+
+    public void setStock(Long stock) {
+        this.stock = stock;
     }
 }
