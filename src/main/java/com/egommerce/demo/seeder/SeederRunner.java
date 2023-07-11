@@ -11,13 +11,18 @@ public class SeederRunner implements CommandLineRunner {
     private final SellerSeeder sellerSeeder;
     private final ProductSeeder productSeeder;
     private final UserSeeder userSeeder;
+    private final AddressSeeder addressSeeder;
+    private final OrderSeeder orderSeeder;
 
     @Autowired
-    public SeederRunner(CategorySeeder categorySeeder, SellerSeeder sellerSeeder, ProductSeeder productSeeder, UserSeeder userSeeder) {
+    public SeederRunner(CategorySeeder categorySeeder, SellerSeeder sellerSeeder, ProductSeeder productSeeder, 
+                        UserSeeder userSeeder, AddressSeeder addressSeeder, OrderSeeder orderSeeder) {
         this.categorySeeder = categorySeeder;
         this.sellerSeeder = sellerSeeder;
         this.productSeeder = productSeeder;
         this.userSeeder = userSeeder;
+        this.addressSeeder = addressSeeder;
+        this.orderSeeder = orderSeeder;
     }
 
     @Override
@@ -26,5 +31,7 @@ public class SeederRunner implements CommandLineRunner {
         sellerSeeder.seed();
         productSeeder.seed();
         userSeeder.seed();
+        addressSeeder.seed();
+        orderSeeder.seed();
     }
 }

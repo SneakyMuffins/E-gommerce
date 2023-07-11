@@ -24,7 +24,7 @@ public class UserSeeder {
             // Create admin user
             User adminUser = new User("Admin user", "Option123!", "admin@gmail.com");
             adminUser.setAdmin(true);
-            userService.registerUser(adminUser);
+            userService.save(adminUser); // Save the admin user directly
 
             System.out.println("User seeding completed.");
         }

@@ -24,6 +24,10 @@ public class AddressService {
         this.entityUpdater = entityUpdater;
     }
 
+    public List<Address> findAll() {
+        return addressRepository.findAll();
+    }
+
     public Address save(Address address) {
         return addressRepository.save(address);
     }
