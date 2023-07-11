@@ -22,7 +22,7 @@ public class UserSeeder {
             userService.registerUser(regularUser);
 
             // Create admin user
-            User adminUser = new User("Admin user", "Option123!", "admin@gmail.com");
+            User adminUser = new User("Admin user", "$2a$10$f5GWMWLgnVFbM/DvdkxQ1uEiJbw6HImAJcZXOPuHCfYBoUifvcioy", "admin@gmail.com");
             adminUser.setAdmin(true);
             userService.save(adminUser); // Save the admin user directly
 
