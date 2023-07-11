@@ -32,6 +32,10 @@ public class AdminService {
         return userService.findAll();
     }
 
+    public User findUserById(Long id) {
+        return userService.findById(id);
+    }
+
     public void updateUserDetails(Long id, User userUpdates) {
         userService.updateUserDetails(id, userUpdates);
     }
@@ -50,7 +54,7 @@ public class AdminService {
         return productService.getAllProducts();
     }
 
-    public Product findById(Long id) {
+    public Product findProductById(Long id) {
         return productService.findById(id);
     }
 

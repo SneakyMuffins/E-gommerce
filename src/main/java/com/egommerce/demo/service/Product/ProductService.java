@@ -1,7 +1,6 @@
 package com.egommerce.demo.service.Product;
 
 import com.egommerce.demo.exception.ResourceNotFoundException;
-import com.egommerce.demo.model.Address.Address;
 import com.egommerce.demo.model.Product.Product;
 import com.egommerce.demo.repository.ProductRepository;
 import com.egommerce.demo.utility.EntityUpdater;

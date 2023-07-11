@@ -1,13 +1,13 @@
 package com.egommerce.demo.model.Seller;
 
 import com.egommerce.demo.annotation.ExcludeUpdate;
-import com.egommerce.demo.model.Product.Product;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import java.util.List;
 
 @Entity
-@Table(name = "Seller")
+@Table(name = "seller")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Seller {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +18,6 @@ public class Seller {
     @Column(name = "name", nullable = false)
     @NotBlank(message = "Seller name is mandatory")
     private String name;
-
-    @OneToMany(mappedBy = "Seller", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> products;
 
     public Seller() {
     }
@@ -39,13 +36,5 @@ public class Seller {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
     }
 }

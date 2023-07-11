@@ -3,6 +3,7 @@ package com.egommerce.demo.model.Product;
 import com.egommerce.demo.annotation.ExcludeUpdate;
 import com.egommerce.demo.model.Category.Category;
 import com.egommerce.demo.model.Seller.Seller;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,10 +11,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 @Entity
 @Table(name = "product")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,9 +32,9 @@ public class Product {
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Seller_id", nullable = false)
+    @JoinColumn(name = "seller_id", nullable = false)
     @NotNull(message = "Seller is mandatory")
-    private Seller Seller;
+    private Seller seller;
 
     @Column(name = "price", nullable = false)
     @NotNull(message = "Price is mandatory")
@@ -42,8 +43,8 @@ public class Product {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "image_urls")
-    private List<String> imageUrls;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @ExcludeUpdate
@@ -58,12 +59,13 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, Category category, Seller Seller, Double price, String description) {
+    public Product(String name, Category category, Seller seller, Double price, String description, String imageUrl) {
         this.name = name;
         this.category = category;
-        this.Seller = Seller;
+        this.seller = seller;
         this.price = price;
         this.description = description;
+        this.imageUrl = imageUrl;
     }
 
     public Long getId() {
@@ -87,11 +89,11 @@ public class Product {
     }
 
     public Seller getSeller() {
-        return Seller;
+        return seller;
     }
 
-    public void setSeller(Seller Seller) {
-        this.Seller = Seller;
+    public void setSeller(Seller seller) {
+        this.seller = seller;
     }
 
     public Double getPrice() {
@@ -110,19 +112,19 @@ public class Product {
         this.description = description;
     }
 
-    public List<String> getImageUrls() {
-        return imageUrls;
-    }
-
-    public void setImageUrls(List<String> imageUrls) {
-        this.imageUrls = imageUrls;
-    }
-
     public Timestamp getCreatedAt() {
         return createdAt;
     }
 
     public Timestamp getUpdatedAt() {
         return updatedAt;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

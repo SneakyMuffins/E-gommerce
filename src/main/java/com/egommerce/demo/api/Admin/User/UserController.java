@@ -31,6 +31,13 @@ public class UserController {
         return adminService.getAllUsers();
     }
 
+    @AdminOnly
+    @RequireAuthorization
+    @GetMapping("/{id}")
+    public User fetchUserById(@PathVariable Long id) {
+        return adminService.findUserById(id);
+    }
+
     @PatchMapping("/{id}")
     public ResponseEntity<String> updateUserDetails(@PathVariable Long id, @RequestBody User userUpdates) {
         try {
