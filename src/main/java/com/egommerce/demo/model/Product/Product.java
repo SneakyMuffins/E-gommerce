@@ -48,7 +48,7 @@ public class Product {
 
     @Column(name = "stock")
     @NotNull(message = "Stock is mandatory")
-    private Long stock;
+    private int stock;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @ExcludeUpdate
@@ -63,7 +63,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, Category category, Seller seller, Double price, String description, String imageUrl, Long stock) {
+    public Product(String name, Category category, Seller seller, Double price, String description, String imageUrl, int stock) {
         this.name = name;
         this.category = category;
         this.seller = seller;
@@ -133,11 +133,11 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
-    public Long getStock() {
+    public int getStock() {
         return stock;
     }
 
-    public void setStock(Long stock) {
+    public void setStock(int stock) {
         this.stock = stock;
     }
 }
