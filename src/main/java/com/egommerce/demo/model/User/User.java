@@ -2,6 +2,7 @@ package com.egommerce.demo.model.User;
 
 import com.egommerce.demo.annotation.ExcludeUpdate;
 import com.egommerce.demo.model.Address.Address;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "user")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     @ExcludeUpdate
     @Id

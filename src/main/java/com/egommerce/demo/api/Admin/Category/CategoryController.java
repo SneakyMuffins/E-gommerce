@@ -28,6 +28,10 @@ public class CategoryController {
         return adminService.getAllCategories();
     }
 
+    @GetMapping("{id}")
+    public Category getCategoryById(@PathVariable Long id) {
+        return adminService.getCategoryById(id);
+    }
 
     @AdminOnly
     @RequireAuthorization

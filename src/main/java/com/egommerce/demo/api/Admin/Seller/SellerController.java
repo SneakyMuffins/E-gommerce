@@ -2,6 +2,7 @@ package com.egommerce.demo.api.Admin.Seller;
 
 import com.egommerce.demo.annotation.AdminOnly;
 import com.egommerce.demo.annotation.RequireAuthorization;
+import com.egommerce.demo.model.Category.Category;
 import com.egommerce.demo.model.Seller.Seller;
 import com.egommerce.demo.service.Admin.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,10 @@ public class SellerController {
         return adminService.getAllSellers();
     }
 
+    @GetMapping("{id}")
+    public Seller getSellerById(@PathVariable Long id) {
+        return adminService.getSellerById(id);
+    }
 
     @AdminOnly
     @RequireAuthorization
